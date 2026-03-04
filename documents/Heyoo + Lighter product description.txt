@@ -1,0 +1,386 @@
+## 1) Product vision (what $LIGHTER is)
+
+$LIGHTER is a consumer narrative product built around a real-world mystery object (a lighter) that pulls someone into a story and into a fog-of-war map that unlocks slowly.
+
+### 1.1 Core thesis (hard requirement)
+
+- **The lighter is not scarce.**
+- **Knowledge is scarce.**
+- A lighter becomes more valuable as more people **add knowledge** to it.
+- The system should detect:
+    - how long someone held the lighter
+    - how often they interacted with the app
+    - how much they contributed
+- The holder should eventually be incentivized to **let the lighter travel** to others, because circulation increases long-term value.
+
+### 1.2 Narrative stance (hard requirement)
+
+The experience must feel like *a story found you*, not like marketing.
+
+- No “scan for more info” style language.
+- It should feel like a clue from within a story.
+
+---
+
+## 2) v1 goals
+
+- Distribute **10,000 lighters** on the map
+- Onboard **5,000 users**
+
+---
+
+## 3) Platforms, identity, and privacy
+
+### 3.1 Platforms (hard requirement)
+
+- **Primary:** mobile web (web-first)
+- **Also:** Telegram Mini App (TMA)
+
+### 3.2 Identity model (hard requirement)
+
+- Anonymous onboarding is required.
+- Identity can be anchored through:
+    - Web anonymous identity (device/session based)
+    - TMA identity (Telegram user)
+    - Optional TON wallet connection later or optionally in v1
+
+### 3.3 Location model (hard requirement)
+
+- GPS check-in is required to reveal map hexes.
+
+### 3.4 Privacy model (hard requirement)
+
+- The system must **not** display exact user GPS location.
+- The map should show the **center of the hexagon** (or similarly coarse representation), not raw coordinates.
+
+### 3.5 Blockchain commitment (hard requirement)
+
+- Committed to **TON**
+- Token already launched on **Blum DEX**
+- v1 unit of value is **reputation** (not token payouts)
+
+---
+
+## 4) Canonical v1 loop
+
+1. Finder discovers a lighter in the real world.
+2. Finder scans the QR code (trailhead).
+3. Finder becomes an anonymous member (web and/or TMA).
+4. Finder performs a GPS check-in.
+5. The system reveals exactly **one hex** (fog-of-war).
+6. Finder reads the lighter’s latest “version” and answers the lighter’s tagged questions.
+7. Holder state changes when someone else scans (soft-holding).
+8. Over time, the lighter accumulates knowledge through many holders.
+9. High-alignment users may receive an invitation to become deeper partners of the story/company/project.
+
+---
+
+## 5) Map system (fog-of-war, H3)
+
+### 5.1 Starting state (hard requirement)
+
+- Map starts **fully dark**.
+
+### 5.2 Reveal rule (hard requirement)
+
+- v1: **1 hex unlock per day**.
+- Later: **reputation-gated upgrade to 2/day**.
+- Reset at **local midnight**.
+
+### 5.3 Reveal mechanism (hard requirement)
+
+- A user reveals a hex by **GPS check-in in that hex**.
+- The UI can show the hex center (or a “revealed cell”) but should not reveal precise check-in coordinates.
+
+### 5.4 H3 usage (hard requirement: no custom math)
+
+Use Uber’s H3 library for:
+
+- Converting GPS coordinates into a cell index at configured resolution (`latLngToCell`).
+- Getting parent cells across resolutions (`cellToParent`).
+- Getting boundaries for drawing (`cellToBoundary`) if needed.
+
+No custom calculations or geographic indexing math should be described or implemented outside H3.
+
+---
+
+## 6) Multi-resolution ownership + shareholding (r12 → r5)
+
+### 6.1 Rule (hard requirement)
+
+When a user unlocks a hex at **resolution 12**, they unlock “presence” at higher levels too:
+
+- User becomes **owner** only of the smallest hex (r12).
+- User becomes a **shareholder** of the parent hexes that include that r12 hex at:
+    - r11, r10, r9, r8, r7, r6, r5
+
+### 6.2 v1 benefits (hard requirement)
+
+- Ownership grants **nothing** in v1.
+- It is a ledger foundation for later mechanics.
+
+### 6.3 Why we still track it in v1
+
+Even with no benefits, this enables later features without re-architecting:
+
+- region-level governance/roles
+- unlocks and invitations tied to area coverage
+- narrative “territories”
+- weighted influence mechanics later (if desired)
+
+---
+
+## 7) Lighter system: knowledge threads
+
+### 7.1 “All lighters are the same” interpretation (hard requirement)
+
+- Lighters are equivalent as objects.
+- What matters is the knowledge accumulated through holder contributions.
+
+### 7.2 Tagged questions (hard requirement)
+
+Each lighter has question(s) “tagged in that lighter.” Each holder can add answers, and the system should preserve prior answers so new holders build on them.
+
+### 7.3 Value creation (conceptual requirement)
+
+The system should treat “value” as emerging from:
+
+- knowledge contributions (answers)
+- meaningful holding (time + interactions)
+- travel/circulation over time
+
+---
+
+## 8) Holder model: soft-holding
+
+### 8.1 Soft-holding definition (hard requirement)
+
+- “Holder” is the most recent scanner.
+- If someone else scans, holder changes.
+
+### 8.2 Abuse concern (hard requirement)
+
+Prevent this:
+
+- “They can make a lighter passed 500 times without doing anything.”
+
+### 8.3 Anti-abuse approach chosen (hard requirement)
+
+You chose **Minimum hold requirements**.
+
+**Meaning:** A holder switch is cheap and can happen often, but it does not automatically create value or reputation. A hold must meet minimum thresholds.
+
+### 8.4 Minimum hold requirements (must exist; values tunable)
+
+A hold is only considered meaningful if it meets:
+
+- **Time held threshold**
+- **App interaction threshold**
+- **GPS integrity requirement** (presence/check-in event that is plausible)
+
+Holds that do not meet thresholds:
+
+- are still stored (for audit / anti-abuse)
+- do not meaningfully increase lighter value or reputation
+
+Exact numeric thresholds are configuration knobs and can change without rewriting system design.
+
+---
+
+## 9) Git-like lighter history (branching)
+
+### 9.1 Core requirement
+
+The lighter’s ownership/knowledge history must be **Git-like**, and:
+
+- Each holder creates a new **branch** from the latest owner’s history.
+- You can travel through the lighter’s history and its owners.
+
+### 9.2 Hard rule (your latest decision)
+
+- **Always fork.**
+
+Meaning:
+
+- Every new holder creates a new version derived from the latest version (a branch from “HEAD”).
+
+### 9.3 Storage requirement (minimal but future-proof)
+
+Each “version” is a commit-like record:
+
+- `commit_id`
+- `parent_commit_id`
+- `lighter_instance_id`
+- `holder_id` (anonymous)
+- timestamps
+- `h3_r12_cell` (coarse location reference; no raw GPS exposed)
+- knowledge payload (answers + related metadata)
+- validity flags (met minimum hold requirements)
+
+This is enough to reconstruct a full branching graph later.
+
+### 9.4 UI requirement (your latest constraint)
+
+- By default, show **the last 3 holders and their versions**.
+- The user can always choose to **see all history**.
+
+You explicitly want to keep this lightweight and not over-engineer the first release UI:
+
+- “No big deal. Technical can be made in clients.”
+
+---
+
+## 10) Special hexes + Explorer drops
+
+### 10.1 Special hex rule (from your earlier direction)
+
+- Most hexes reveal via check-in.
+- Some hexes can be special:
+    - An “Explorer” type user can hide a gift lighter in that hex and tag it.
+
+### 10.2 Explorer reward requirement (hard requirement)
+
+Explorer gift should unlock:
+
+- whatever a usual lighter unlocks
+- plus an **invitation** to become a partner of the story/company/project
+
+Rationale you gave:
+
+- “We need more people to care about the same as I do.”
+
+### 10.3 v1 posture
+
+Explorer mechanics can exist as:
+
+- a tagged event type
+- a narrative invitation experience
+- a partner onboarding funnel (lightweight at first)
+
+Exact criteria for becoming Explorer/partner can be defined later.
+
+---
+
+## 11) Reputation (primary unit of value)
+
+### 11.1 What reputation represents (v1)
+
+A non-monetary progression and trust metric that captures:
+
+- contribution quality/quantity
+- exploration consistency
+- meaningful holding
+- healthy circulation
+
+### 11.2 Reputation should be influenced by
+
+- adding knowledge (answers)
+- time held (meeting thresholds)
+- app interactions (meaningful engagement)
+- GPS check-ins (hex reveals, daily constrained)
+- passing/circulation events that follow meaningful holding
+
+### 11.3 Reputation should not reward
+
+- rapid scanning/holder flipping without contribution
+- low-effort spam answers
+- location spoofing behavior
+
+---
+
+## 12) System “resolutions” / knobs you will manage
+
+You explicitly asked that the plan reflects more than “map resolution.”
+
+### 12.1 Geo
+
+- configured H3 resolutions
+- reveal pacing (1/day, later 2/day gated)
+- check-in validity constraints
+
+### 12.2 Identity
+
+- anonymous identity anchoring and optional linking to TON wallet
+- TMA vs web-first behaviors
+
+### 12.3 Time
+
+- daily reset at local midnight
+- minimum hold thresholds
+- cooldowns and rate limits (Tier 1)
+
+### 12.4 Knowledge
+
+- number/type of questions per lighter
+- how previous answers are shown to new holders
+- spam filters and minimum-quality requirements
+
+### 12.5 Visibility / mystery
+
+- fog density
+- what gets revealed in a hex (map only vs map + narrative shard vs map + special marker)
+- how often “special hexes” occur
+
+### 12.6 Anti-abuse (Tier 1)
+
+- rate limits
+- GPS plausibility checks
+- holder flipping friction (optional)
+- spam filters for content
+
+---
+
+## 13) Minimum v1 user experiences (high-level)
+
+### 13.1 Trailhead (QR)
+
+- fast load
+- story-forward
+- anonymous membership path
+
+### 13.2 Map
+
+- fully dark initially
+- reveals one r12 hex per day via GPS check-in
+- shows only hex center, not exact user location
+
+### 13.3 Lighter page
+
+- shows latest state/version
+- shows tagged questions
+- accepts answers
+- shows last 3 holders/versions by default
+- “see all history” available
+
+### 13.4 History view
+
+- default: last 3
+- expanded: all history (format can evolve later)
+
+---
+
+## 14) Definition of done (v1)
+
+v1 is complete when:
+
+- Anonymous onboarding works (web-first + TMA)
+- GPS check-in reveals exactly 1 r12 hex per day (local midnight reset)
+- Unlocking r12 records:
+    - ownership of r12
+    - shareholding of r11..r5 parents (via H3 library calls)
+- Lighter scan/experience supports knowledge contribution (Q&A)
+- Soft-holding works (holder changes on scan)
+- Minimum hold requirements prevent reputation/value being created by spam passing
+- Git-like branching history is stored (always fork)
+- UI shows last 3 holders/versions by default, with “see all history”
+
+---
+
+## 15) Open items (intentionally not finalized yet)
+
+These remain open because you did not lock them, not because they were missed:
+
+- Exact numeric thresholds for minimum hold requirements (time, interaction counts)
+- Concrete criteria and permissions for Explorer/partner roles
+- When/how to anchor any parts of reputation onchain (TON) in v1 vs later
+- Exact representation of “see all history” (list, tree, timeline) beyond the default last-3 view
