@@ -4,35 +4,68 @@ trigger: always_on
 
 # Coding Standards (Heyoo)
 
-## ⚠️ META-RULE (READ FIRST)
-
-1) Verify `.agent/rules` exists. 2) List the relevant rule files for the task (coding-standards, code-quality-workflow, project-structure, plus feature-specific). 3) State them before work. After changes: run `pnpm lint`, fix all errors, and confirm alignment with the request.
+> Pre-action protocol: See CLAUDE.md §2.
 
 ## Core Principles
 - Strict TypeScript, no `any`, no implicit `any`.
-- Small, focused functions; early returns over nesting.
+- Small, focused functions (<40 lines); early returns over nesting.
 - Self-documenting names; avoid abbreviations. Booleans prefixed (`is/has/should/can`).
 - Arrow functions for components; props typed via interfaces/types, not inline shapes.
+- DRY: extract repeated logic into custom hooks or utility functions after 2+ occurrences.
+
+## Naming Conventions
+- **Variables/functions:** `camelCase`. Descriptive — no `usr`, `msg`, `btn`.
+- **Components:** `PascalCase`. Filename matches export: `UserProfile.tsx` → `UserProfile`.
+- **Types/Interfaces:** `PascalCase`. Suffix props interfaces with `Props` (e.g., `ButtonProps`, `MapViewProps`).
+- **Booleans:** `is`, `has`, `should`, `can` prefix.
+- **Constants:** True compile-time constants: `SCREAMING_SNAKE_CASE` (`MAX_RETRIES`). Config objects and runtime values: `camelCase`.
+- **Hooks:** `use` prefix + descriptive name: `useWalletConnection`, `useHexOwnership`.
 
 ## Syntax
-- Single quotes; trailing semicolons allowed if formatter inserts them, but prefer none when authoring. Stay consistent with Prettier config.
-- Control blocks separated by a blank line for readability.
+- Single quotes for strings.
+- No semicolons when authoring. If Prettier inserts them, don't fight it — stay consistent with project config.
+- ALWAYS add empty lines around control statements (`if`, `for`, `while`, `switch`) for readability.
+- No empty lines between consecutive simple statements.
 
-## Error handling
-- Always handle async errors; log or surface actionable messages. No silent catches.
+## Import Ordering (Strict)
+Group imports in this order, separated by blank lines:
+1. React / framework (`react`, `next/*`, `expo-*`)
+2. Third-party libraries
+3. Internal packages (`@heyoo/ui`, `@heyoo/core`)
+4. Relative internal modules (components, hooks, utils)
+5. Types (if separate `import type`)
+6. Styles / CSS
 
-## Data contracts
+## Error Handling
+- Always handle async errors. No silent catches. Log or surface actionable messages.
+- Use try/catch/finally for async flows:
+
+```typescript
+try {
+  await apiCall()
+} catch (error) {
+  console.error('Context: what failed', error)
+  setError(error)
+} finally {
+  setIsLoading(false)
+}
+```
+
+## Data Contracts
 - Define types near usage. Prefer discriminated unions to avoid illegal states.
 - Never expose raw GPS coordinates; use H3 hex IDs and hex centers only.
 
-## UI text
+## UI Text
 - Avoid hardcoded user-facing strings; centralize in a strings/i18n helper. If i18n system is not set yet, keep strings in a constants module for easy migration.
 
-## Imports
-- Prefer ESM. Use absolute imports/aliases once configured; avoid deep relative chains.
+## Accessibility
+- Use semantic HTML elements (`<button>`, `<nav>`, `<main>`, `<section>`).
+- Add ARIA labels to interactive elements without visible text.
+- Ensure keyboard navigability for all interactive components.
 
-## Testing and linting
+## Testing and Linting
 - Write/extend tests when logic changes. Lint must pass (`pnpm lint`).
+- See `testing.md` for framework and pattern details.
 
 ## Cross-reference
 - Components: see `react-components.md`

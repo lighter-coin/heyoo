@@ -1,6 +1,6 @@
 # TypeScript Skill (2026)
 
-Version: TypeScript >= 5.5 (align with React 19.2.x and RN/Expo SDK 55 toolchains). Package manager: pnpm.
+Version: TypeScript 5.9.2 (align with React 19.2.x and RN/Expo SDK 55 toolchains). Package manager: pnpm 9.
 
 ## Rules
 - Strict mode everything: no `any`, no type assertions unless unavoidable; enable `noUncheckedIndexedAccess`, `noUnusedLocals`, `noUnusedParameters`, `exactOptionalPropertyTypes`, `noFallthroughCasesInSwitch`.

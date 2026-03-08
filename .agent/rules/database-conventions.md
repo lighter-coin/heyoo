@@ -2,252 +2,114 @@
 trigger: always_on
 ---
 
-# Database Conventions (Drizzle ORM)
+# Database Conventions (Heyoo)
 
-## 🎯 Core Principle
-
-**Type-safe queries, explicit migrations, and consistent naming. PostgreSQL-first design.**
+> Pre-action protocol: See CLAUDE.md §2.
 
 ## Technology Stack
 
 | Tool | Purpose |
 |------|---------|
 | **PostgreSQL 18** | Primary database |
-| **Drizzle ORM 0.45.1** | Type-safe queries |
-| **Drizzle Kit 0.31.8** | Migrations |
-| **Redis 8** | Caching, seat locks, sessions |
+| **Drizzle ORM 0.45.1** | Type-safe queries & schema definition |
+| **Drizzle Kit 0.31.8** | Migration generation |
+| **Redis 8** | Caching, sessions, rate limiting |
 
 ## Schema Location
-
-All schema definitions live in `apps/api/src/db/schema/`:
 
 ```
 apps/api/src/db/
 ├── schema/
 │   ├── index.ts          # Re-exports all tables
 │   ├── users.ts
-│   ├── theaters.ts
-│   ├── venues.ts
-│   ├── events.ts
-│   ├── seats.ts
-│   ├── orders.ts
-│   └── tickets.ts
-├── migrations/           # Generated SQL migrations
+│   ├── lighters.ts       # Lighter drops, ownership
+│   ├── hex-ownership.ts  # H3 hex claim records
+│   └── history.ts        # Action/event audit log
+├── migrations/           # Generated SQL (never hand-edit existing)
 ├── seed/
-│   └── index.ts          # Development seed data
-└── index.ts              # Database connection
+│   └── index.ts          # Dev seed data
+└── index.ts              # DB connection & client
 ```
 
-## Table Naming
+## Tables & Columns
+- Tables: plural `snake_case`. Junction tables: alphabetical `{a}_{b}`.
+- Columns: `snake_case`. Foreign keys: `{referenced_table_singular}_id`.
+- Timestamps: `created_at`, `updated_at` (trigger or app-managed). Use `deleted_at` for soft delete when needed.
+- Indexes: `idx_{table}_{columns}`. Enums: `{table}_{column}_enum`.
 
-- **Tables:** `snake_case`, plural (e.g., `theater_companies`)
-- **Columns:** `snake_case` (e.g., `created_at`)
-- **Foreign keys:** `{referenced_table_singular}_id` (e.g., `theater_company_id`)
-- **Indexes:** `idx_{table}_{columns}` (e.g., `idx_events_date`)
-- **Enums:** `{table}_{column}_enum` (e.g., `event_status_enum`)
+## Column Types
+- Primary keys: `uuid` (default random). Consider ULID if ordering matters.
+- Monetary / token amounts: `numeric(12,2)`. Never use floats.
+- Time: `timestamptz` only. Never `timestamp` without timezone.
+- JSON: `jsonb` for localized fields or flexible metadata.
 
-## Schema Definition Pattern
+## Geospatial (Critical)
+- **Store H3 hex IDs only.** Never store raw lat/lng coordinates.
+- Include `hex_resolution` column when multiple resolutions coexist.
+- Derive hex center coordinates at the application edge (API response layer), never persist them.
 
-```typescript
-// db/schema/events.ts
-import { pgTable, uuid, varchar, timestamp, jsonb, decimal, boolean, index } from 'drizzle-orm/pg-core'
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
-import { theaterCompanies } from './theaters'
-import { venues } from './venues'
+## Constraints & Indexing
+- Columns `NOT NULL` by default; add `UNIQUE` where business logic requires.
+- Use `CHECK` constraints for domain invariants (e.g., `CHECK (hex_resolution BETWEEN 5 AND 12)`).
+- Index all foreign keys and frequent filter columns. Avoid over-indexing — measure before adding.
 
-export const events = pgTable('events', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  # Database Conventions (Heyoo)
+## Query Patterns
 
-  ## ⚠️ META-RULE
-  Before DB work: confirm `.agent/rules` exists; list applicable files (coding-standards, code-quality-workflow, backend-architecture, database-conventions) and state them. After changes: run `pnpm lint`, fix errors, and verify against the request.
-
-  ## Tables & columns
-  - Tables: plural snake_case. Junctions: alphabetical `{a}_{b}`.
-  - Columns: snake_case; FKs as `{table}_id`.
-  - Timestamps: `created_at`, `updated_at` (trigger or app-managed). Use `deleted_at` for soft delete when needed.
-
-  ## Types
-  - Prefer `uuid` PKs; consider ULID if ordering is needed.
-  - Monetary: `numeric(12,2)`; avoid floats.
-  - Time: `timestamptz` only.
-  - JSON: `jsonb` for localized or flexible fields.
-
-  ## Geo
-  - Store H3 hex IDs; do not store raw lat/lng. Include hex resolution field when helpful. Derive centers at the edge, not persisted.
-
-  ## Constraints & indexing
-  - Not null by default; unique where business needs. Use check constraints for domain limits (counts, ranges).
-  - Index FKs and frequent filters; avoid over-indexing.
-
-  ## Migrations
-  - Drizzle migrations versioned in repo; never rewrite history. New migration per change; reversible when feasible.
-
-  ## Query patterns
-  - Use Drizzle query builder; parameterize raw SQL when unavoidable. Wrap multi-step writes in transactions.
-
-  ## Auditing
-  - For critical actions (balances, token ops), add audit rows with who/what/when and before/after snapshots when feasible.
 ```typescript
 // Select with filters
-const publishedEvents = await db
+const recentLighters = await db
   .select()
-  .from(events)
-  .where(eq(events.status, 'published'))
-  .orderBy(desc(events.eventDate))
+  .from(lighters)
+  .where(eq(lighters.status, 'active'))
+  .orderBy(desc(lighters.createdAt))
   .limit(20)
 
 // Insert and return
-const [newEvent] = await db
-  .insert(events)
-  .values({ ...eventData })
+const [newLighter] = await db
+  .insert(lighters)
+  .values({ ownerId: userId, hexId, resolution: 12 })
   .returning()
 
-// Update
-await db
-  .update(events)
-  .set({ status: 'cancelled', updatedAt: new Date() })
-  .where(eq(events.id, eventId))
-
-// Delete
-await db
-  .delete(events)
-  .where(eq(events.id, eventId))
-```
-
-### Joins
-
-```typescript
-// Join with relations
-const eventsWithTheater = await db
-  .select({
-    event: events,
-    theater: theaterCompanies
-  })
-  .from(events)
-  .innerJoin(theaterCompanies, eq(events.theaterCompanyId, theaterCompanies.id))
-  .where(eq(events.status, 'published'))
-```
-
-### Transactions
-
-```typescript
-// Use transactions for multi-table operations
+// Transaction for multi-step writes
 await db.transaction(async (tx) => {
-  // Lock seats
-  await tx
-    .update(seats)
-    .set({ status: 'reserved', reservedBy: userId })
-    .where(inArray(seats.id, seatIds))
-  
-  // Create order
-  const [order] = await tx
-    .insert(orders)
-    .values({ userId, eventId, totalAmount })
+  const [lighter] = await tx
+    .insert(lighters)
+    .values({ ownerId: userId, hexId, resolution: 12 })
     .returning()
-  
-  return order
+
+  await tx.insert(history).values({
+    lighterId: lighter.id,
+    action: 'created',
+    actorId: userId,
+  })
+
+  return lighter
 })
 ```
 
+- Always use the Drizzle query builder. Parameterize raw SQL when unavoidable.
+- Wrap multi-step writes in transactions.
+
 ## Migrations
+- Drizzle migrations versioned in repo. Never rewrite migration history.
+- One migration per schema change. Make reversible when feasible.
+- Commands: `pnpm db:generate` → `pnpm db:migrate` (or `pnpm db:push` for dev-only).
 
-### Generate Migration
+## Zod Integration
+- Use `drizzle-zod` (`createInsertSchema`, `createSelectSchema`) to derive validation schemas from table definitions.
+- Export these from the schema file for use in API route validation.
 
-```bash
-# After modifying schema
-pnpm db:generate
-
-# Apply migrations
-pnpm db:migrate
-
-# Push schema (dev only - no migration file)
-pnpm db:push
-```
-
-### Migration Naming
-
-Migration files are auto-named by Drizzle Kit:
-- `0001_initial_schema.sql`
-- `0002_add_events_table.sql`
-
-### Manual Migrations
-
-For complex changes, create manual SQL:
-
-```sql
--- migrations/0003_add_search_index.sql
-CREATE INDEX CONCURRENTLY idx_events_search 
-ON events USING GIN (to_tsvector('simple', title::text || ' ' || description::text));
-```
-
-## Seeding
-
-```typescript
-// db/seed/index.ts
-import { db } from '../index'
-import { theaterCompanies, venues, events } from '../schema'
-
-async function seed() {
-  console.log('🌱 Seeding database...')
-  
-  // Clear existing data (dev only!)
-  await db.delete(events)
-  await db.delete(venues)
-  await db.delete(theaterCompanies)
-  
-  // Insert theaters
-  const [theater] = await db
-    .insert(theaterCompanies)
-    .values({
-      slug: 'diyarbakir-sehir-tiyatrosu',
-      name: {
-        ku: 'Şanoya Bajêr a Amedê',
-        tr: 'Diyarbakır Şehir Tiyatrosu',
-        en: 'Diyarbakır City Theater'
-      }
-    })
-    .returning()
-  
-  // ... more seed data
-  
-  console.log('✅ Seeding complete')
-}
-
-seed()
-  .catch(console.error)
-  .finally(() => process.exit())
-```
+## Auditing
+- For critical actions (token burns, ownership transfers, balance changes), insert audit rows with `actor_id`, `action`, `before_snapshot`, `after_snapshot`, and `timestamp`.
 
 ## Redis Usage
+- Session storage and rate limiting.
+- Short-lived caches for computed hex aggregations.
+- Always set TTLs on cache keys. Never use Redis as a primary data store.
 
-### Seat Locking
-
-```typescript
-// lib/seat-lock.ts
-import { redis } from '@/config/redis'
-
-const LOCK_TTL = 600 // 10 minutes
-
-export async function lockSeats(eventId: string, seatIds: string[], userId: string) {
-  const lockKey = `lock:${eventId}`
-  const reservationId = crypto.randomUUID()
-  
-  // Use Redis transactions
-  const pipeline = redis.multi()
-  
-  for (const seatId of seatIds) {
-    pipeline.hset(lockKey, seatId, JSON.stringify({ userId, reservationId }))
-  }
-  
-  pipeline.expire(lockKey, LOCK_TTL)
-  await pipeline.exec()
-  
-  return { reservationId, expiresAt: Date.now() + LOCK_TTL * 1000 }
-}
-
-export async function isSeatsAvailable(eventId: string, seatIds: string[]) {
-  const lockKey = `lock:${eventId}`
+## Cross-references
+- Backend: see `backend-architecture.md`
+- Standards: see `coding-standards.md`
   const locked = await redis.hmget(lockKey, ...seatIds)
   
   return locked.every(v => v === null)

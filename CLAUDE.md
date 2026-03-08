@@ -14,10 +14,11 @@ Hold nothing back. Treat me like someone who needs the truth, not comfort. When 
 ## 0. Project Context: The Heyoo & $LIGHTER Ecosystem
 
 You are working on **Heyoo**, a multi-platform application merged with the **$LIGHTER** ecosystem (Fire, Maps, and TON). Decisions must account for:
-- **Unified Architecture:** A monorepo (Turborepo + pnpm workspaces) targeting Telegram Mini Apps (TMA), Native (Expo React Native), and Web (Next.js/Solito).
+- **Unified Architecture:** A monorepo (Turborepo + pnpm workspaces) targeting Telegram Mini Apps (TMA via `apps/tma`), Native (Expo React Native via `apps/mobile`), and Web (Next.js via `apps/web`).
+- **Shared Packages:** `packages/ui` (UI primitives), `packages/core` (H3 utils, validators, storage, haptics), `packages/types` (Zod schemas, shared types), `packages/api` (API client), `packages/maps` (map abstractions), `packages/scanner` (QR abstractions), `packages/blockchain` (TON Connect, $LIGHTER helpers).
 - **Web3 & TON:** Integration with the TON blockchain and `@tonconnect/ui-react` for tokenomics ($LIGHTER token drops, burning, mystery mechanics).
 - **Geospatial & Maps:** Driven by MapLibre / React-Map-GL and **Uber H3** Hexagon APIs. Raw coordinates are explicitly avoided in data storage and payloads.
-- **Backend Stack:** Node.js, Fastify, tRPC, Drizzle ORM (PostgreSQL), and strict TypeScript.
+- **Backend Stack:** Node.js 22, Fastify, tRPC, Drizzle ORM (PostgreSQL), and strict TypeScript.
 - **State Management:** Zustand (client) paired with TanStack Query / tRPC (server/offline sync).
 
 ## 1. Communication Style: Direct & Honest
@@ -48,7 +49,7 @@ ls -la skills/
 ```
 
 ### Step 2: Identify Applicable Rules
-- Identify your agent interface and read ALL applicable rule files from `.agent/rules/` (e.g. `tma-constraints.md`, `web3-blockchain.md`, `geospatial-standards.md`, `camera-hardware.md`, `backend-architecture.md`, `code-quality-workflow.md`, `coding-standards.md`, `database-conventions.md`, `navigation-routing.md`, `project-structure.md`, `react-components.md`, `state-management.md`, `styling-architecture.md`) that apply to the current task.
+- Identify your agent interface and read ALL applicable rule files from `.agent/rules/` (e.g. `tma-constraints.md`, `web3-blockchain.md`, `geospatial-standards.md`, `camera-hardware.md`, `backend-architecture.md`, `code-quality-workflow.md`, `coding-standards.md`, `database-conventions.md`, `navigation-routing.md`, `project-structure.md`, `react-components.md`, `state-management.md`, `styling-architecture.md`, `testing.md`, `environment-config.md`, `error-boundaries.md`, `ci-cd.md`, `security.md`) that apply to the current task.
 - List ALL `skills/` files (e.g. `turborepo.md`, `telegram-mini-app.md`, `maps-geospatial.md`, `ton-web3.md`, `state-and-fetching-trpc.md`, `expo.md`, `node.md`, `react.md`, `db-orm.md`, `typescript.md`, `tech-stack.md`) that apply.
 - State which ones you will follow.
 - If a relevant rule file is missing, STOP and ask before proceeding
@@ -262,7 +263,10 @@ type State =
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "exactOptionalPropertyTypes": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "verbatimModuleSyntax": true
   }
 }
 ```
@@ -277,6 +281,9 @@ type State =
 - **Booleans:** Prefix with `is`, `has`, `should`, `can`. Example: `isLoading`, `hasPermission`.
 - **Constants:** UPPER_SNAKE_CASE only for true compile-time constants. Runtime values use camelCase.
 - **Components:** PascalCase. The file name matches the export: `UserProfile.tsx` exports `UserProfile`.
+- **Props interfaces:** PascalCase with `Props` suffix: `MapMarkerProps`, `LighterCardProps`.
+- **Hooks:** `use` prefix + descriptive camelCase: `useWalletConnection`, `useHexOwnership`.
+- **Files:** Components: `PascalCase.tsx`. Hooks: `use-kebab-case.ts`. Utils: `kebab-case.ts`.
 - **Avoid abbreviations** unless universally understood (`id`, `url`, `api`). `btn`, `mgr`, `util` → no.
 - **Name length scales with scope.** A loop variable can be `i`. A module-level function cannot be `calc`.
 
@@ -304,6 +311,16 @@ function createUser(options: CreateUserOptions): Promise<User> {}
 - **Pure functions by default.** Side effects should be explicit, pushed to the edges of the system, and clearly named (`saveToDatabase`, `sendEmail`).
 - **Early returns over nested conditionals.** Guard clauses first, happy path last.
 
+### 4.2.1 — Import Ordering
+
+Group imports in this order, separated by blank lines:
+1. React / framework (`react`, `next/*`, `expo-*`)
+2. Third-party libraries
+3. Internal packages (`@heyoo/ui`, `@heyoo/core`, `@heyoo/types`)
+4. Relative internal modules (components, hooks, utils)
+5. Types (`import type`)
+6. Styles / CSS
+
 ### 4.3 — Error Handling
 
 - **Never swallow errors.** `catch (e) {}` is a bug. Always log, rethrow, or handle meaningfully.
@@ -330,6 +347,73 @@ class InsufficientBalanceError extends Error {
 - **TODO comments must have context:** `// TODO(username): description — tracking issue #123`
 - **Delete commented-out code.** Git remembers. You don't need to.
 - **JSDoc for public APIs only.** Internal functions with clear names don't need doc comments.
+
+### 4.5 — React Component Architecture
+
+This section provides senior-architect-level guidance for React patterns across the Heyoo ecosystem. For detailed rules and code templates, see `.agent/rules/react-components.md`.
+
+#### Server vs Client Components
+- **Default to Server Components** (RSC). They have zero client-side JS cost.
+- Add `'use client'` at the **smallest leaf component** that needs interactivity — never at the page/layout level unless unavoidable.
+- Data fetching belongs in Server Components. Client components fetch only for real-time/polling/mutation via TanStack Query.
+
+#### Component File Template
+
+```tsx
+'use client' // Only when needed
+
+// React/framework → external libs → @heyoo/* → relative → types → styles
+import { useState, useMemo } from 'react'
+import { clsx } from 'clsx'
+import { Button } from '@heyoo/ui'
+import { useHexOwnership } from './use-hex-ownership'
+import type { LighterCardProps } from './types'
+
+interface ComponentNameProps {
+  hexId: string
+  isActive: boolean
+}
+
+export const ComponentName = ({ hexId, isActive }: ComponentNameProps) => {
+  // hooks → derived state → handlers → render
+  return <div />
+}
+```
+
+#### Hook Extraction Rules
+- Extract when logic is reused OR exceeds ~15 lines of hooks/effects in a single component.
+- Return tuples `[value, setter]` for simple state; named objects `{ data, isLoading, error }` for complex state.
+- One hook = one concern. Never create `useEverything()`.
+
+#### Suspense & Error Boundary Placement
+- **Suspense**: Per-route at minimum. Per-data-source for independent loading states.
+- **Error boundaries**: Per-route via Next.js `error.tsx`. Per-feature for critical flows (wallet, map, scanner).
+- One failure must not cascade to the entire screen.
+
+#### React 19 Patterns
+- `use()` for reading promises/context in render.
+- Server Actions (`'use server'`) for form submissions and mutations.
+- `useOptimistic` for immediate feedback during async actions.
+- `useActionState` for form actions with return values.
+
+#### Prop Formatting
+- Multiline when >2 props. **Close tag on the last prop line** — never on a new line.
+- **Sort props by length** (shortest first).
+
+```tsx
+// ✅ Correct
+<Component
+  id={id}
+  title={title}
+  onSelect={handleSelect}
+  description={longDescription} />
+
+// ❌ Wrong — closing tag on its own line, unsorted
+<Component
+  description={longDescription}
+  id={id}
+/>
+```
 
 ---
 
@@ -438,8 +522,11 @@ const makeUser = (overrides?: Partial<User>): User => ({
   - Use `React.memo()` for list items and components that receive stable props.
   - `useCallback` is for referential stability, not performance — use it when passing callbacks to memoized children.
   - Avoid creating objects/arrays in JSX: `style={{ color: 'red' }}` creates a new object every render.
+  - **React 19**: Concurrent features and Suspense are available. Place Suspense boundaries intentionally — per-route and per-data-source, not arbitrarily.
+  - **Server Components** eliminate client-side overhead entirely. Prefer them unless client interactivity is required.
 - **Bundle size matters.** Before adding a dependency, check its size. A 200KB utility for one function is not acceptable when a 5-line helper does the job.
 - **Lazy load aggressively.** Code-split by route at minimum. Heavy components (charts, editors, maps) should always be lazy-loaded.
+- **TMA strict limit:** Initial JS bundle must stay under 650KB uncompressed. MapLibre alone is ~200KB — it must be lazy-loaded, never in the initial bundle.
 
 ---
 
@@ -450,7 +537,7 @@ const makeUser = (overrides?: Partial<User>): User => ({
 - **Use parameterized queries.** String concatenation for SQL/queries is a CVE waiting to happen.
 - **Authenticate and authorize separately.** Knowing who someone is ≠ knowing what they can do.
 - **HTTPS everywhere.** No exceptions.
-- **Audit dependencies.** Run `npm audit` / `pnpm audit` regularly. Don't ignore critical vulnerabilities because "it's indirect."
+- **Audit dependencies.** Run `pnpm audit` regularly. Don't ignore critical vulnerabilities because "it's indirect."
 
 ---
 

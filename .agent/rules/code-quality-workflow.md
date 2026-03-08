@@ -4,8 +4,7 @@ trigger: always_on
 
 # Code Quality Workflow (Heyoo)
 
-## ⚠️ META-RULE
-1) Confirm `.agent/rules` exists. 2) List applicable files (at minimum: code-quality-workflow, coding-standards, project-structure; plus feature-specific). 3) State them before work. After changes: run `pnpm lint`, fix all errors, and confirm the change matches the request.
+> Pre-action protocol: See CLAUDE.md §2.
 
 ## Core principles
 - Production-ready only: no broken builds, no regressions, no TODOs left untracked.
@@ -24,12 +23,20 @@ trigger: always_on
 ## Documentation
 - Update existing docs if your change alters behavior or setup. Do not add new docs unless requested.
 
-## Verification checklist
+## Verification Checklist
 - `pnpm lint` passes.
 - Types clean; no `any` introduced.
 - Tests updated/added where logic changes.
-- Imports consistent with configured aliases once they exist.
+- Imports consistent with configured aliases (`@heyoo/*` for packages).
 - No hardcoded user-facing strings; keep them centralized for future i18n.
+- Styles use tokens/theme variables; no magic color/spacing values.
 
-## Error handling
+## Root Cause Rule
+**NEVER PATCH.** Fix the root cause, not the symptom.
+- ❌ `try { ... } catch { return null }` — hides the real error
+- ✅ Fix the logic so it doesn’t throw unexpectedly
+
+If a `catch` exists, it must log, transform, or surface the error. Never return a silent fallback.
+
+## Error Handling
 - No swallowed errors. Handle and surface actionable messages.
