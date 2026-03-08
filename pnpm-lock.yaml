@@ -125,7 +125,7 @@ importers:
 
   packages/api:
     devDependencies:
-      '@repo/typescript-config':
+      '@heyoo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       typescript:
@@ -134,7 +134,7 @@ importers:
 
   packages/blockchain:
     devDependencies:
-      '@repo/typescript-config':
+      '@heyoo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       typescript:
@@ -147,7 +147,7 @@ importers:
         specifier: ^5.0.11
         version: 5.0.11(@types/react@19.2.14)(react@19.2.3)
     devDependencies:
-      '@repo/typescript-config':
+      '@heyoo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       typescript:
@@ -192,7 +192,7 @@ importers:
 
   packages/maps:
     devDependencies:
-      '@repo/typescript-config':
+      '@heyoo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       typescript:
@@ -201,7 +201,7 @@ importers:
 
   packages/scanner:
     devDependencies:
-      '@repo/typescript-config':
+      '@heyoo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       typescript:
@@ -210,7 +210,7 @@ importers:
 
   packages/types:
     devDependencies:
-      '@repo/typescript-config':
+      '@heyoo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       typescript:
@@ -228,10 +228,10 @@ importers:
         specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
     devDependencies:
-      '@repo/eslint-config':
+      '@heyoo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@repo/typescript-config':
+      '@heyoo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':

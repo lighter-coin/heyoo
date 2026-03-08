@@ -8,6 +8,6 @@
   },
   "devDependencies": {
     "typescript": "^5.5.0",
-    "@repo/typescript-config": "workspace:*"
+    "@heyoo/typescript-config": "workspace:*"
   }
 }
