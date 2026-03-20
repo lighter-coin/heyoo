@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Playfair_Display, Inter, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -16,6 +16,13 @@ const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-space-grotesk",
   display: "swap",
 });
 
@@ -37,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className={`${playfair.variable} ${inter.variable}`}>
+    <html lang="tr" className={`${playfair.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="bg-void text-light font-body min-h-dvh overflow-hidden">
         {children}
         <Analytics />

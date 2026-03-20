@@ -25,32 +25,41 @@ export default function WelcomeScreen({
       `}
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0)" }}
     >
-      <div className="flex flex-col items-center text-center max-w-[420px] z-[2]">
-        {/* Title */}
+      <div className="flex flex-col items-center text-center max-w-[420px] z-[1001]">
+        {/* Title — gold like lighter-coin-website */}
         <h1
-          className="font-display font-black text-light text-glow-fire leading-none tracking-[0.02em] animate-[fadeInUp_0.8s_ease_forwards]"
-          style={{ fontSize: "clamp(42px, 11vw, 72px)" }}
+          className="font-black leading-none tracking-[0.02em] opacity-0"
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: "clamp(42px, 11vw, 72px)",
+            color: "#FFD700",
+            animation: "litByFlame 1.4s ease-out 3.2s forwards",
+          }}
         >
           $LIGHTER
         </h1>
 
-        {/* Subtitle */}
+        {/* Subtitle — animated fire gradient like lighter-coin-website */}
         <h2
-          className="font-display font-bold leading-tight mt-1 bg-clip-text text-transparent animate-[fadeInUp_0.8s_ease_0.3s_forwards] opacity-0"
+          className="font-black uppercase leading-tight mt-1 opacity-0 fire-title"
           style={{
             fontSize: "clamp(22px, 6vw, 40px)",
-            backgroundImage: "var(--gradient-flame)",
+            letterSpacing: "0.06em",
+            animation: "litByFlame 1.4s ease-out 2.7s forwards",
           }}
         >
           Story of Fire
         </h2>
 
-        {/* Tagline */}
+        {/* Tagline — warm gold text */}
         <p
-          className="font-display italic text-ash opacity-0 animate-[fadeInUp_0.8s_ease_0.6s_forwards] max-w-[340px] mt-6"
+          className="italic opacity-0 max-w-[340px] mt-6"
           style={{
+            fontFamily: "var(--font-display), 'Playfair Display', serif",
             fontSize: "clamp(14px, 3.5vw, 17px)",
             lineHeight: 1.7,
+            color: "#c8a87a",
+            animation: "litByFlame 1.6s ease-out 2.2s forwards",
           }}
         >
           Bu çakmağı buldun.
@@ -58,17 +67,20 @@ export default function WelcomeScreen({
           Ama o seni mi buldu?
         </p>
 
-        {/* Buttons */}
-        <div className="flex flex-col gap-3 mt-8 w-full max-w-[260px] opacity-0 animate-[fadeInUp_0.8s_ease_0.9s_forwards]">
+        {/* Buttons — like lighter-coin-website CTA */}
+        <div
+          className="flex flex-col gap-3 mt-8 w-full max-w-[260px] opacity-0"
+          style={{ animation: "litByFlame 1.6s ease-out 1.9s forwards" }}
+        >
           <button
             onClick={onEnterFire}
-            className="btn-base btn-fire"
+            className="primary-cta"
           >
             Ateşe Gir
           </button>
           <button
             onClick={onExplore}
-            className="btn-base btn-gold"
+            className="secondary-cta"
           >
             Hikâyeyi Keşfet
           </button>
