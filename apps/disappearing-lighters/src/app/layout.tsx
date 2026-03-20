@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -38,6 +39,7 @@ export default function RootLayout({
     <html lang="tr" className={`${playfair.variable} ${inter.variable}`}>
       <body className="bg-void text-light font-body min-h-dvh overflow-hidden">
         {children}
+        <Analytics />
       </body>
     </html>
   );
