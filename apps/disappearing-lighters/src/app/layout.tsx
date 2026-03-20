@@ -1,22 +1,32 @@
 import type { Metadata, Viewport } from "next";
+import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "700", "900"],
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Disappearing Lighters",
-  description: "The fire remembers you.",
-  openGraph: {
-    title: "Disappearing Lighters",
-    description: "The fire remembers you.",
-    siteName: "Disappearing Lighters",
-  },
+  title: "$LIGHTER — Disappearing Lighters",
+  description: "Bu çakmağı buldun. Ama o seni mi buldu?",
 };
 
 export const viewport: Viewport = {
+  themeColor: "#060A14",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: "#0a0a0a",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -25,8 +35,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
-      <body className="antialiased">{children}</body>
+    <html lang="tr" className={`${playfair.variable} ${inter.variable}`}>
+      <body className="bg-void text-light font-body min-h-dvh overflow-hidden">
+        {children}
+      </body>
     </html>
   );
 }
