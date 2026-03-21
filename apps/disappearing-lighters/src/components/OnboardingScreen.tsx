@@ -1,42 +1,39 @@
-"use client";
+'use client'
 
 interface OnboardingScreenProps {
-  visible: boolean;
-  exiting: boolean;
+  visible: boolean
+  exiting: boolean
 }
 
 const steps = [
   {
-    icon: "🔥",
-    text: "$LIGHTER — kaybolmak üzere olan alevlerin hikâyesi",
+    icon: '🔥',
+    text: '$LIGHTER — kaybolmak üzere olan alevlerin hikâyesi',
   },
   {
-    icon: "📍",
-    text: "Her çakmak bir koordinat. Her koordinat bir sır.",
+    icon: '📍',
+    text: 'Her çakmak bir koordinat. Her koordinat bir sır.',
   },
   {
-    icon: "⛓️",
-    text: "TON blockchain üzerinde dijital alev sahipliği",
+    icon: '⛓️',
+    text: 'TON blockchain üzerinde dijital alev sahipliği',
   },
-];
+]
 
-export default function OnboardingScreen({
-  visible,
-  exiting,
-}: OnboardingScreenProps) {
+export default function OnboardingScreen({ visible, exiting }: OnboardingScreenProps) {
   return (
     <div
       className={`fixed inset-0 flex flex-col items-center justify-center px-6 z-10 transition-all duration-800 ease-in-out bg-void
-        ${!visible && !exiting ? "opacity-0 pointer-events-none scale-[1.02]" : ""}
-        ${exiting ? "opacity-0 pointer-events-none scale-[0.98]" : ""}
-        ${visible && !exiting ? "opacity-100 scale-100" : ""}
+        ${!visible && !exiting ? 'opacity-0 pointer-events-none scale-[1.02]' : ''}
+        ${exiting ? 'opacity-0 pointer-events-none scale-[0.98]' : ''}
+        ${visible && !exiting ? 'opacity-100 scale-100' : ''}
       `}
     >
       <div className="flex flex-col items-center text-center max-w-[420px] z-[2]">
         {/* Welcome text */}
         <h2
           className="font-display font-bold text-light mb-6 animate-[fadeInUp_0.8s_ease_forwards]"
-          style={{ fontSize: "clamp(28px, 7vw, 40px)" }}
+          style={{ fontSize: 'clamp(28px, 7vw, 40px)' }}
         >
           Hoş geldin, gezgin.
         </h2>
@@ -68,5 +65,5 @@ export default function OnboardingScreen({
         </a>
       </div>
     </div>
-  );
+  )
 }

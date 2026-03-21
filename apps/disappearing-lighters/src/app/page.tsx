@@ -1,30 +1,33 @@
-"use client";
+'use client'
 
-import { useState, useCallback } from "react";
-import WelcomeScreen from "@/components/WelcomeScreen";
-import QuestionScreen from "@/components/QuestionScreen";
-import WaitingScreen from "@/components/WaitingScreen";
-import OnboardingScreen from "@/components/OnboardingScreen";
-import SoundToggle from "@/components/SoundToggle";
-import AmbientGlow from "@/components/AmbientGlow";
+import { useState, useCallback } from 'react'
+import WelcomeScreen from '@/components/WelcomeScreen'
+import QuestionScreen from '@/components/QuestionScreen'
+import WaitingScreen from '@/components/WaitingScreen'
+import OnboardingScreen from '@/components/OnboardingScreen'
+import SoundToggle from '@/components/SoundToggle'
+import AmbientGlow from '@/components/AmbientGlow'
 
-type Screen = "welcome" | "question" | "waiting" | "onboard";
+type Screen = 'welcome' | 'question' | 'waiting' | 'onboard'
 
 export default function Home() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>("welcome");
-  const [exitingScreen, setExitingScreen] = useState<Screen | null>(null);
+  const [currentScreen, setCurrentScreen] = useState<Screen>('welcome')
+  const [exitingScreen, setExitingScreen] = useState<Screen | null>(null)
 
-  const transitionTo = useCallback((next: Screen) => {
-    setExitingScreen(currentScreen);
-    setTimeout(() => {
-      setCurrentScreen(next);
-      setExitingScreen(null);
-    }, 800);
-  }, [currentScreen]);
+  const transitionTo = useCallback(
+    (next: Screen) => {
+      setExitingScreen(currentScreen)
+      setTimeout(() => {
+        setCurrentScreen(next)
+        setExitingScreen(null)
+      }, 800)
+    },
+    [currentScreen],
+  )
 
   const handleWaitingComplete = useCallback(() => {
-    transitionTo("onboard");
-  }, [transitionTo]);
+    transitionTo('onboard')
+  }, [transitionTo])
 
   return (
     <main className="relative w-full h-dvh overflow-hidden">
@@ -38,37 +41,37 @@ export default function Home() {
       <div
         className="fixed inset-0"
         onTouchMove={(e) => {
-          const target = e.target as HTMLElement;
-          if (!target.closest("textarea")) {
-            e.preventDefault();
+          const target = e.target as HTMLElement
+          if (!target.closest('textarea')) {
+            e.preventDefault()
           }
         }}
       />
 
       {/* Screens */}
       <WelcomeScreen
-        visible={currentScreen === "welcome"}
-        exiting={exitingScreen === "welcome"}
-        onEnterFire={() => transitionTo("question")}
-        onExplore={() => transitionTo("question")}
+        visible={currentScreen === 'welcome'}
+        exiting={exitingScreen === 'welcome'}
+        onEnterFire={() => transitionTo('question')}
+        onExplore={() => transitionTo('question')}
       />
 
       <QuestionScreen
-        visible={currentScreen === "question"}
-        exiting={exitingScreen === "question"}
-        onSubmit={() => transitionTo("waiting")}
+        visible={currentScreen === 'question'}
+        exiting={exitingScreen === 'question'}
+        onSubmit={() => transitionTo('waiting')}
       />
 
       <WaitingScreen
-        visible={currentScreen === "waiting"}
-        exiting={exitingScreen === "waiting"}
+        visible={currentScreen === 'waiting'}
+        exiting={exitingScreen === 'waiting'}
         onComplete={handleWaitingComplete}
       />
 
       <OnboardingScreen
-        visible={currentScreen === "onboard"}
-        exiting={exitingScreen === "onboard"}
+        visible={currentScreen === 'onboard'}
+        exiting={exitingScreen === 'onboard'}
       />
     </main>
-  );
+  )
 }

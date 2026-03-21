@@ -1,4 +1,4 @@
-export function FlameIcon({ className = "" }: { className?: string }) {
+export function FlameIcon({ className = '' }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -12,5 +12,5 @@ export function FlameIcon({ className = "" }: { className?: string }) {
         fill="rgba(255,209,102,0.8)"
       />
     </svg>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 export default function AmbientGlow() {
   return (
@@ -12,5 +12,5 @@ export default function AmbientGlow() {
         )`,
       }}
     />
-  );
+  )
 }

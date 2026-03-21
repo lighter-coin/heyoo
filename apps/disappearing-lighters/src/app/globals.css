@@ -1,55 +1,58 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme inline {
   /* Flame */
-  --color-flame-core: #FFF8E1;
-  --color-flame-bright: #FFB300;
-  --color-flame-mid: #E8832A;
-  --color-flame-deep: #D4651A;
-  --color-ember: #BF360C;
+  --color-flame-core: #fff8e1;
+  --color-flame-bright: #ffb300;
+  --color-flame-mid: #e8832a;
+  --color-flame-deep: #d4651a;
+  --color-ember: #bf360c;
 
   /* Night */
-  --color-void: #060A14;
-  --color-night: #0D1322;
-  --color-shadow: #161D30;
-  --color-mist: #2A3250;
-  --color-smoke: #6B7394;
-  --color-ash: #A0A8C0;
-  --color-light: #E8E4DC;
+  --color-void: #060a14;
+  --color-night: #0d1322;
+  --color-shadow: #161d30;
+  --color-mist: #2a3250;
+  --color-smoke: #6b7394;
+  --color-ash: #a0a8c0;
+  --color-light: #e8e4dc;
 
   /* Accent */
-  --color-mystical-blue: #1A3A8F;
-  --color-blue-glow: #2A5FD6;
-  --color-gold: #C9A84C;
-  --color-telegram-blue: #2AABEE;
+  --color-mystical-blue: #1a3a8f;
+  --color-blue-glow: #2a5fd6;
+  --color-gold: #c9a84c;
+  --color-telegram-blue: #2aabee;
 
   /* Fonts */
-  --font-display: var(--font-playfair), "Playfair Display", serif;
-  --font-body: var(--font-inter), "Inter", sans-serif;
+  --font-display: var(--font-playfair), 'Playfair Display', serif;
+  --font-body: var(--font-inter), 'Inter', sans-serif;
 }
 
 /* CSS Custom Properties for gradients */
 :root {
-  --gradient-flame: linear-gradient(135deg, #FFB300 0%, #E8832A 50%, #D4651A 100%);
-  --gradient-ember: linear-gradient(180deg, #FFB300 0%, #BF360C 100%);
-  --gradient-night: linear-gradient(180deg, #060A14 0%, #0D1322 50%, #161D30 100%);
+  --gradient-flame: linear-gradient(135deg, #ffb300 0%, #e8832a 50%, #d4651a 100%);
+  --gradient-ember: linear-gradient(180deg, #ffb300 0%, #bf360c 100%);
+  --gradient-night: linear-gradient(180deg, #060a14 0%, #0d1322 50%, #161d30 100%);
   --gradient-glow: radial-gradient(ellipse, rgba(255, 147, 41, 0.15) 0%, transparent 70%);
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   overflow: hidden;
 }
 
 body {
-  background: #060A14;
-  color: #E8E4DC;
+  background: #060a14;
+  color: #e8e4dc;
   font-family: var(--font-body);
   min-height: 100dvh;
 }
@@ -86,9 +89,9 @@ body {
 }
 
 .btn-fire {
-  background: #2A5FD6;
+  background: #2a5fd6;
   color: #fff;
-  border: 1px solid #2A5FD6;
+  border: 1px solid #2a5fd6;
   position: relative;
   overflow: hidden;
 }
@@ -97,7 +100,12 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 60%
+  );
   transform: translateX(-100%);
   transition: transform 0.6s;
 }
@@ -113,34 +121,34 @@ body {
 
 .btn-gold {
   background: transparent;
-  color: #C9A84C;
+  color: #c9a84c;
   border: 1px solid rgba(201, 168, 76, 0.4);
 }
 
 .btn-gold:hover,
 .btn-gold:active {
-  border-color: #C9A84C;
+  border-color: #c9a84c;
   background: rgba(201, 168, 76, 0.06);
   box-shadow: 0 0 20px rgba(201, 168, 76, 0.12);
 }
 
 .btn-flame {
   background: transparent;
-  color: #FFB300;
+  color: #ffb300;
   border: 1px solid rgba(255, 179, 0, 0.4);
 }
 
 .btn-flame:hover,
 .btn-flame:active {
-  border-color: #FFB300;
+  border-color: #ffb300;
   background: rgba(255, 179, 0, 0.06);
   box-shadow: 0 0 24px rgba(255, 179, 0, 0.12);
 }
 
 .btn-telegram {
-  background: #2AABEE;
+  background: #2aabee;
   color: #fff;
-  border: 1px solid #2AABEE;
+  border: 1px solid #2aabee;
   border-radius: 6px;
   padding: 16px 48px;
   font-size: 14px;
@@ -153,101 +161,245 @@ body {
 
 /* ===== KEYFRAMES ===== */
 @keyframes flicker {
-  0%   { height: 53px; width: 21px; opacity: 1; }
-  25%  { height: 57px; width: 23px; opacity: 0.97; }
-  50%  { height: 55px; width: 22px; opacity: 0.98; }
-  75%  { height: 58px; width: 24px; opacity: 0.96; }
-  100% { height: 52px; width: 20px; opacity: 1; }
+  0% {
+    height: 53px;
+    width: 21px;
+    opacity: 1;
+  }
+  25% {
+    height: 57px;
+    width: 23px;
+    opacity: 0.97;
+  }
+  50% {
+    height: 55px;
+    width: 22px;
+    opacity: 0.98;
+  }
+  75% {
+    height: 58px;
+    width: 24px;
+    opacity: 0.96;
+  }
+  100% {
+    height: 52px;
+    width: 20px;
+    opacity: 1;
+  }
 }
 
 @keyframes flickerLg {
-  0%   { height: 68px; width: 28px; opacity: 1; }
-  25%  { height: 72px; width: 30px; opacity: 0.97; }
-  50%  { height: 70px; width: 29px; opacity: 0.98; }
-  75%  { height: 74px; width: 32px; opacity: 0.96; }
-  100% { height: 66px; width: 27px; opacity: 1; }
+  0% {
+    height: 68px;
+    width: 28px;
+    opacity: 1;
+  }
+  25% {
+    height: 72px;
+    width: 30px;
+    opacity: 0.97;
+  }
+  50% {
+    height: 70px;
+    width: 29px;
+    opacity: 0.98;
+  }
+  75% {
+    height: 74px;
+    width: 32px;
+    opacity: 0.96;
+  }
+  100% {
+    height: 66px;
+    width: 27px;
+    opacity: 1;
+  }
 }
 
 @keyframes innerFlicker {
-  0%   { height: 38px; opacity: 0.9; }
-  100% { height: 42px; opacity: 1; }
+  0% {
+    height: 38px;
+    opacity: 0.9;
+  }
+  100% {
+    height: 42px;
+    opacity: 1;
+  }
 }
 
 @keyframes innerFlickerLg {
-  0%   { height: 50px; opacity: 0.9; }
-  100% { height: 55px; opacity: 1; }
+  0% {
+    height: 50px;
+    opacity: 0.9;
+  }
+  100% {
+    height: 55px;
+    opacity: 1;
+  }
 }
 
 @keyframes sway {
-  0%, 100% { transform: translateX(-50%) rotate(-1.2deg); }
-  50%      { transform: translateX(-50%) rotate(1.2deg); }
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(-1.2deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(1.2deg);
+  }
 }
 
 @keyframes glowPulse {
-  0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-  50%      { opacity: 0.9; transform: translateX(-50%) scale(1.08); }
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateX(-50%) scale(1.08);
+  }
 }
 
 @keyframes rise {
-  0%   { bottom: 0; opacity: 0; transform: translateX(0) scale(1); }
-  8%   { opacity: 0.7; }
-  40%  { opacity: 0.4; transform: translateX(8px) scale(0.8); }
-  80%  { opacity: 0.15; transform: translateX(-4px) scale(0.5); }
-  100% { bottom: 100%; opacity: 0; transform: translateX(2px) scale(0.3); }
+  0% {
+    bottom: 0;
+    opacity: 0;
+    transform: translateX(0) scale(1);
+  }
+  8% {
+    opacity: 0.7;
+  }
+  40% {
+    opacity: 0.4;
+    transform: translateX(8px) scale(0.8);
+  }
+  80% {
+    opacity: 0.15;
+    transform: translateX(-4px) scale(0.5);
+  }
+  100% {
+    bottom: 100%;
+    opacity: 0;
+    transform: translateX(2px) scale(0.3);
+  }
 }
 
 @keyframes smokeDrift {
-  0%   { transform: translate(0, 0); }
-  100% { transform: translate(20px, -10px); }
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(20px, -10px);
+  }
 }
 
 @keyframes grow {
-  0%, 100% { transform: translateX(-50%) scaleY(1); }
-  50%      { transform: translateX(-50%) scaleY(1.15); }
+  0%,
+  100% {
+    transform: translateX(-50%) scaleY(1);
+  }
+  50% {
+    transform: translateX(-50%) scaleY(1.15);
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes flameWobble {
-  50% { transform: scale(1, 1.2) translate(0, -30px) rotate(-2deg); }
+  50% {
+    transform: scale(1, 1.2) translate(0, -30px) rotate(-2deg);
+  }
 }
 
 @keyframes flamefly {
-  0%   { transform: translate(0) rotate(180deg); }
-  50%  { opacity: 1; }
-  100% { transform: translate(-20px, -100px) rotate(180deg); opacity: 0; }
+  0% {
+    transform: translate(0) rotate(180deg);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-20px, -100px) rotate(180deg);
+    opacity: 0;
+  }
 }
 
 @keyframes progressFill {
-  from { width: 0%; }
-  to   { width: 100%; }
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 @keyframes litByFlame {
-  0%   { opacity: 0; filter: brightness(0); }
-  40%  { opacity: 0.6; filter: brightness(0.7); }
-  100% { opacity: 1; filter: brightness(1); }
+  0% {
+    opacity: 0;
+    filter: brightness(0);
+  }
+  40% {
+    opacity: 0.6;
+    filter: brightness(0.7);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
 }
 
 @keyframes matchStrike {
-  0%   { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
-  30%  { box-shadow: 0 0 18px #ff6600, 0 0 40px rgba(255, 100, 0, 0.5); }
-  55%  { box-shadow: 0 0 28px #ff9900, 0 0 60px rgba(255, 150, 0, 0.55); }
-  80%  { box-shadow: 0 0 14px #ff6600, 0 0 30px rgba(255, 100, 0, 0.35); }
-  100% { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
+  0% {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  30% {
+    box-shadow:
+      0 0 18px #ff6600,
+      0 0 40px rgba(255, 100, 0, 0.5);
+  }
+  55% {
+    box-shadow:
+      0 0 28px #ff9900,
+      0 0 60px rgba(255, 150, 0, 0.55);
+  }
+  80% {
+    box-shadow:
+      0 0 14px #ff6600,
+      0 0 30px rgba(255, 100, 0, 0.35);
+  }
+  100% {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
 }
 
 @keyframes fireSweep {
-  0%   { background-position: 0% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 /* ===== FIRE TITLE (animated gradient heading) ===== */
 .fire-title {
-  background: linear-gradient(90deg, #ff4400 0%, #ff7700 25%, #FFD04A 50%, #ff7700 75%, #ff4400 100%);
+  background: linear-gradient(
+    90deg,
+    #ff4400 0%,
+    #ff7700 25%,
+    #ffd04a 50%,
+    #ff7700 75%,
+    #ff4400 100%
+  );
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -262,7 +414,7 @@ body {
 /* ===== CTA BUTTONS (lighter-coin-website style) ===== */
 .primary-cta {
   padding: 14px 20px;
-  background-color: #1E90FF;
+  background-color: #1e90ff;
   color: #ffffff;
   border: none;
   border-radius: 5px;
@@ -300,7 +452,9 @@ body {
 
 /* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

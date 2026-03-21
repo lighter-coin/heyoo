@@ -1,37 +1,33 @@
-"use client";
+'use client'
 
-import { useState, useRef } from "react";
+import { useState, useRef } from 'react'
 
 interface QuestionScreenProps {
-  onSubmit: () => void;
-  visible: boolean;
-  exiting: boolean;
+  onSubmit: () => void
+  visible: boolean
+  exiting: boolean
 }
 
-export default function QuestionScreen({
-  onSubmit,
-  visible,
-  exiting,
-}: QuestionScreenProps) {
-  const [answer, setAnswer] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+export default function QuestionScreen({ onSubmit, visible, exiting }: QuestionScreenProps) {
+  const [answer, setAnswer] = useState('')
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleSubmit = () => {
     if (!answer.trim()) {
-      textareaRef.current?.focus();
-      return;
+      textareaRef.current?.focus()
+      return
     }
-    onSubmit();
-  };
+    onSubmit()
+  }
 
   return (
     <div
       className={`fixed inset-0 flex flex-col items-center justify-center px-6 z-10 transition-all duration-800 ease-in-out bg-void
-        ${!visible && !exiting ? "opacity-0 pointer-events-none scale-[1.02]" : ""}
-        ${exiting ? "opacity-0 pointer-events-none scale-[0.98]" : ""}
-        ${visible && !exiting ? "opacity-100 scale-100" : ""}
+        ${!visible && !exiting ? 'opacity-0 pointer-events-none scale-[1.02]' : ''}
+        ${exiting ? 'opacity-0 pointer-events-none scale-[0.98]' : ''}
+        ${visible && !exiting ? 'opacity-100 scale-100' : ''}
       `}
-      style={{ paddingBottom: "env(safe-area-inset-bottom, 0)" }}
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}
     >
       {/* Smoke background */}
       <div
@@ -41,7 +37,7 @@ export default function QuestionScreen({
             radial-gradient(ellipse at 30% 20%, rgba(42, 50, 80, 0.15) 0%, transparent 50%),
             radial-gradient(ellipse at 70% 80%, rgba(42, 50, 80, 0.1) 0%, transparent 50%)
           `,
-          animation: "smokeDrift 12s ease-in-out infinite alternate",
+          animation: 'smokeDrift 12s ease-in-out infinite alternate',
         }}
       />
 
@@ -50,9 +46,9 @@ export default function QuestionScreen({
         <p
           className="font-display italic text-light text-glow-fire mb-8 animate-[fadeInUp_0.8s_ease_forwards]"
           style={{
-            fontSize: "clamp(22px, 5.5vw, 30px)",
+            fontSize: 'clamp(22px, 5.5vw, 30px)',
             lineHeight: 1.5,
-            textShadow: "0 0 30px rgba(255, 147, 41, 0.1)",
+            textShadow: '0 0 30px rgba(255, 147, 41, 0.1)',
           }}
         >
           &ldquo;En son ne zaman
@@ -79,5 +75,5 @@ export default function QuestionScreen({
         </button>
       </div>
     </div>
-  );
+  )
 }
