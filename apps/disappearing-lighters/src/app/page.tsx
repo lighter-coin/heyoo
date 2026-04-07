@@ -34,13 +34,13 @@ export default function Home() {
 
       {/* Fat-yhu's arm — top-right */}
       <TargetedArm
-        src="/faythu-arm.png"
+        src="/fatyhu-arm.png"
         alt="Fat-yhu's arm"
         corner="top-right"
         entryEasing="linear"
         entryDelaySec={FAYTHU_ENTRY_DELAY_SEC}
         entryDurationSec={FAYTHU_ENTRY_DURATION_SEC}
-        filterDropShadow="drop-shadow(0 0 30px rgba(100,150,255,0.3))" />
+        filterDropShadow="drop-shadow(0 0 30px rgba(255,140,0,0.3))" />
     </main>
   )
 }
