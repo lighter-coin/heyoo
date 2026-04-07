@@ -1,0 +1,62 @@
+/*
+  Slide-in animations for each arm corner. The wrapper element holds the
+  positioning and the slide transform; the rotation lives on a child element
+  so the two transforms never collide. Linear easing is enforced from the
+  inline style on the consumer side.
+*/
+
+.slideWrapperBottomLeft {
+  animation-name: slideInBottomLeft;
+  animation-fill-mode: both;
+}
+
+.slideWrapperTopRight {
+  animation-name: slideInTopRight;
+  animation-fill-mode: both;
+}
+
+.slideOutBottomLeft {
+  animation-name: slideOutBottomLeft;
+  animation-fill-mode: forwards;
+}
+
+.slideOutTopRight {
+  animation-name: slideOutTopRight;
+  animation-fill-mode: forwards;
+}
+
+@keyframes slideInBottomLeft {
+  0% {
+    transform: translate(-110%, 110%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes slideInTopRight {
+  0% {
+    transform: translate(110%, -110%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes slideOutBottomLeft {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-110%, 110%);
+  }
+}
+
+@keyframes slideOutTopRight {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(110%, -110%);
+  }
+}
