@@ -3,6 +3,7 @@ import { Playfair_Display, Inter, Space_Grotesk } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
+import { BackgroundAudio } from '@/components/BackgroundAudio'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -47,6 +48,7 @@ export default function RootLayout({
     <html lang="tr" className={`${playfair.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="bg-void text-light font-body min-h-dvh overflow-hidden">
         {children}
+        <BackgroundAudio src="/audio/illi.mp3" />
         <Analytics />
         <SpeedInsights />
       </body>
