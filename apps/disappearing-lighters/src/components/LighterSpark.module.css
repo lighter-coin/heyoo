@@ -1,0 +1,49 @@
+/*
+  Solid white core + a single smooth warm halo built from layered box-shadows.
+  The shadow layers share the same warm hue family (white → yellow → orange),
+  so they blend into one continuous glow with no visible banding.
+*/
+.fireballSpark {
+  width: 5vmin;
+  height: 5vmin;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow:
+    0 0 4.8vmin 2.4vmin #fff,
+    0 0 6vmin 3vmin #ffcc33,
+    0 0 8vmin 7.2vmin #ff8a00;
+  opacity: 0;
+  transform: scale(0.55);
+  animation:
+    starReveal 5s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    starBreath 6s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+@keyframes starReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes starBreath {
+  0%, 100% {
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(1.12) saturate(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fireballSpark {
+    animation: none;
+    opacity: 1;
+    transform: scale(1);
+  }
+}
