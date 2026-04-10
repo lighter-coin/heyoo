@@ -6,6 +6,9 @@ trigger: always_on
 
 > Pre-action protocol: See CLAUDE.md §2.
 
+## Language
+- **English only inside source code.** All identifiers, comments, string literals, CSS comments, commit messages, and documentation files must be written in English. No Turkish, ever — not even in throwaway comments. This is non-negotiable. Conversational replies to the user can remain in Turkish, but nothing that lands in a file may be.
+
 ## Core Principles
 - Strict TypeScript, no `any`, no implicit `any`.
 - Small, focused functions (<40 lines); early returns over nesting.

@@ -1,0 +1,113 @@
+/* Simple text overlay on top of the sun. No shape logic. */
+
+.card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.disc {
+  position: relative;
+  width: var(--story-disc-size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.textBlock {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  justify-content: center;
+  width: 62%;
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: stanzaFade var(--stanza-fade-duration) ease-out var(--stanza-delay) forwards;
+}
+
+.textTop {
+  top: 14%;
+}
+
+.textCenter {
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 44%;
+}
+
+.textBottom {
+  bottom: 12%;
+  width: 60%;
+}
+
+.copy {
+  margin: 0;
+  color: rgba(59, 25, 0, 0.92);
+  font-family: var(--font-space-mono), monospace;
+  font-size: clamp(0.72rem, 0.52rem + 0.74vmin, 1.02rem);
+  font-weight: 400;
+  line-height: 1.38;
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-wrap: pretty;
+  text-shadow: 0 0 14px rgba(255, 248, 225, 0.18);
+}
+
+.copy strong {
+  font-weight: 700;
+  color: rgba(35, 14, 0, 0.96);
+}
+
+.copyCenter {
+  font-size: clamp(0.72rem, 0.54rem + 0.52vmin, 0.94rem);
+  line-height: 1.46;
+}
+
+@keyframes stanzaFade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .textBlock {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .textBlock {
+    width: 68%;
+  }
+
+  .textTop {
+    top: 12%;
+  }
+
+  .textCenter {
+    width: 52%;
+  }
+
+  .textBottom {
+    bottom: 10%;
+    width: 66%;
+  }
+
+  .copy {
+    font-size: clamp(0.64rem, 0.5rem + 0.88vw, 0.88rem);
+    letter-spacing: 0.025em;
+    line-height: 1.34;
+  }
+
+  .copyCenter {
+    font-size: clamp(0.66rem, 0.52rem + 0.7vw, 0.82rem);
+    line-height: 1.4;
+  }
+}

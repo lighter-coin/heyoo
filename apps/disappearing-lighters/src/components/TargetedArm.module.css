@@ -1,0 +1,90 @@
+/*
+  Slide-in animations for each arm corner. The wrapper element holds the
+  positioning and the slide transform; the rotation lives on a child element
+  so the two transforms never collide. Linear easing is enforced from the
+  inline style on the consumer side.
+
+  The optional `pulseable` class fires a one-shot scale pulse on the inner
+  <img> element (1 -> targetScale -> 1) when its own stanza fades in. The
+  pulse lives on the img so it never collides with the slide transform on
+  the outer wrapper or the rotate transform on the middle wrapper.
+*/
+
+.slideWrapperBottomLeft {
+  animation-name: slideInBottomLeft;
+  animation-fill-mode: both;
+}
+
+.slideWrapperTopRight {
+  animation-name: slideInTopRight;
+  animation-fill-mode: both;
+}
+
+.slideOutBottomLeft {
+  animation-name: slideOutBottomLeft;
+  animation-fill-mode: forwards;
+}
+
+.slideOutTopRight {
+  animation-name: slideOutTopRight;
+  animation-fill-mode: forwards;
+}
+
+.pulseable {
+  animation: armPulse var(--pulse-duration, 0.9s) ease-in-out
+    var(--pulse-delay, 0s) 1 both;
+  transform-origin: center center;
+}
+
+@keyframes slideInBottomLeft {
+  0% {
+    transform: translate(-110%, 110%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes slideInTopRight {
+  0% {
+    transform: translate(110%, -110%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes slideOutBottomLeft {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-110%, 110%);
+  }
+}
+
+@keyframes slideOutTopRight {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(110%, -110%);
+  }
+}
+
+@keyframes armPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(var(--pulse-scale, 1.2));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulseable {
+    animation: none;
+    transform: none;
+  }
+}

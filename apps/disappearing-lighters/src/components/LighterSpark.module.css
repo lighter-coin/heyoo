@@ -1,0 +1,86 @@
+/*
+  Solid white core + a single smooth warm halo built from layered box-shadows.
+  The shadow layers share the same warm hue family (white -> yellow -> orange),
+  so they blend into one continuous glow with no visible banding.
+
+  Custom properties on :root expose the warm spectrum so other components
+  (StoryCard) can read the same palette without re-declaring hex literals.
+*/
+:root {
+  --spark-core: #f2ec7b;
+  --spark-mid: #ffcc33;
+  --spark-edge: #ff8a00;
+  --story-disc-size: min(78vw, 62vh, 32rem);
+}
+
+.fireballSpark {
+  width: 5vmin;
+  height: 5vmin;
+  border-radius: 50%;
+  background-color: var(--spark-core);
+  box-shadow:
+    0 0 4.8vmin 2.4vmin var(--spark-core),
+    0 0 6vmin 3vmin var(--spark-mid),
+    0 0 8vmin 7.2vmin var(--spark-edge);
+  opacity: 0;
+  transform: scale(0.55);
+  animation:
+    starReveal 5s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    starBreath 6s ease-in-out infinite,
+    sparkExpand var(--spark-expand-duration, 2s) ease-out var(--spark-expand-delay, 6.5s) forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes starReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes starBreath {
+  0%,
+  100% {
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    filter: brightness(1.05) saturate(1.9);
+  }
+}
+
+@keyframes sparkExpand {
+  0% {
+    width: 5vmin;
+    height: 5vmin;
+    box-shadow:
+      0 0 4.8vmin 2.4vmin var(--spark-core),
+      0 0 6vmin 3vmin var(--spark-mid),
+      0 0 8vmin 7.2vmin var(--spark-edge);
+  }
+  100% {
+    width: var(--story-disc-size);
+    height: var(--story-disc-size);
+    box-shadow:
+      0 0 2vmin 0 rgba(255, 255, 255, 0.65),
+      0 0 6vmin 2vmin var(--spark-mid),
+      0 0 10vmin 8vmin var(--spark-edge);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fireballSpark {
+    animation: none;
+    opacity: 1;
+    transform: scale(1);
+    width: var(--story-disc-size);
+    height: var(--story-disc-size);
+    box-shadow:
+      0 0 6vmin 0 rgba(255, 255, 255, 0.65),
+      0 0 14vmin 2vmin var(--spark-mid),
+      0 0 28vmin 8vmin var(--spark-edge);
+  }
+}
