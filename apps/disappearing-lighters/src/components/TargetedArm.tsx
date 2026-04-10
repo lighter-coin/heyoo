@@ -2,7 +2,10 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react'
-import styles from './TargetedArm.module.css'
+
+import styles from '@/components/TargetedArm.module.css'
+
+import type { CSSProperties } from 'react'
 
 interface TargetedArmProps {
   src: string
@@ -15,6 +18,18 @@ interface TargetedArmProps {
   entryDurationSec: number
   /** CSS easing function for the slide-in. Defaults to linear. */
   entryEasing?: string
+  /** Seconds to wait before the spotlight pulse fires. */
+  pulseDelaySec?: number
+  /** Pulse duration (full 1 -> peak -> 1 round-trip). */
+  pulseDurationSec?: number
+  /** Peak scale value reached at the midpoint of the pulse. */
+  pulseScale?: number
+}
+
+interface PulseCSSProperties extends CSSProperties {
+  '--pulse-delay': string
+  '--pulse-duration': string
+  '--pulse-scale': string
 }
 
 /**
@@ -45,6 +60,9 @@ export const TargetedArm = ({
   entryDelaySec,
   entryDurationSec,
   entryEasing = 'linear',
+  pulseDelaySec,
+  pulseDurationSec,
+  pulseScale,
 }: TargetedArmProps) => {
   const isBottomLeft = corner === 'bottom-left'
   const [angle, setAngle] = useState(0)
@@ -93,10 +111,29 @@ export const TargetedArm = ({
     : styles.slideOutTopRight
   const activeSlideClass = isExiting ? slideOutClass : slideInClass
 
+  const hasPulse =
+    pulseDelaySec !== undefined &&
+    pulseDurationSec !== undefined &&
+    pulseScale !== undefined
+
+  const imgStyle: CSSProperties & Partial<PulseCSSProperties> = {
+    filter: filterDropShadow,
+  }
+
+  if (hasPulse) {
+    imgStyle['--pulse-delay'] = `${pulseDelaySec}s`
+    imgStyle['--pulse-duration'] = `${pulseDurationSec}s`
+    imgStyle['--pulse-scale'] = `${pulseScale}`
+  }
+
+  const imgClassName = hasPulse
+    ? `w-full h-auto ${styles.pulseable}`
+    : 'w-full h-auto'
+
   return (
     <div
-      className={`absolute z-10 cursor-pointer ${activeSlideClass}`}
       onClick={() => setIsExiting(true)}
+      className={`absolute z-10 cursor-pointer ${activeSlideClass}`}
       style={{
         bottom: isBottomLeft ? '0' : 'auto',
         left: isBottomLeft ? '0' : 'auto',
@@ -117,8 +154,8 @@ export const TargetedArm = ({
           src={src}
           alt={alt}
           draggable={false}
-          className="w-full h-auto"
-          style={{ filter: filterDropShadow }} />
+          style={imgStyle}
+          className={imgClassName} />
       </div>
     </div>
   )

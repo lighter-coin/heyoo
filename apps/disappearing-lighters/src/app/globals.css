@@ -24,7 +24,7 @@
   --color-telegram-blue: #2aabee;
 
   /* Fonts */
-  --font-display: var(--font-playfair), 'Playfair Display', serif;
+  --font-display: var(--font-playfair), Quantico, 'serif';
   --font-body: var(--font-inter), 'Inter', sans-serif;
 }
 
