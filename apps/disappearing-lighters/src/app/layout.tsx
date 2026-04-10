@@ -1,9 +1,11 @@
-import type { Metadata, Viewport } from 'next'
-import { Playfair_Display, Inter, Space_Grotesk } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import type { Metadata, Viewport } from 'next'
+import { Inter, Playfair_Display, Space_Grotesk, Space_Mono } from 'next/font/google'
+import { Controls } from '@/components/Controls'
+import { I18nProvider } from '@/i18n/I18nProvider'
+import { en } from '@/i18n/locales/en'
 import './globals.css'
-import { BackgroundAudio } from '@/components/BackgroundAudio'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -27,9 +29,16 @@ const spaceGrotesk = Space_Grotesk({
   display: 'swap',
 })
 
+const spaceMono = Space_Mono({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-space-mono',
+  display: 'swap',
+})
+
 export const metadata: Metadata = {
-  title: '$LIGHTER — Disappearing Lighters',
-  description: 'Bu çakmağı buldun. Ama o seni mi buldu?',
+  title: en.meta.title,
+  description: en.meta.description,
 }
 
 export const viewport: Viewport = {
@@ -45,10 +54,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="tr" className={`${playfair.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
+    <html
+      lang="en"
+      className={`${playfair.variable} ${inter.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}>
       <body className="bg-void text-light font-body min-h-dvh overflow-hidden">
-        {children}
-        <BackgroundAudio src="/audio/illi.mp3" />
+        <I18nProvider>
+          {children}
+          <Controls audioSrc="/audio/illi.mp3" />
+        </I18nProvider>
         <Analytics />
         <SpeedInsights />
       </body>
